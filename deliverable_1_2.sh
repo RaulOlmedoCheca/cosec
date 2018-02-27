@@ -29,3 +29,5 @@ sudo iptables -A INPUT -p tcp -d $MYIP --sport domain -m state --state RELATED,E
 # acepta todas las conexiones entrantes que ya hayan sido establecidas o relacionadas con una peticion saliente del puerto HTTP del origen (por ejemplo cuando se ejecuta apt-get update)
 sudo iptables -A INPUT -p tcp -d $MYIP --sport http -m state --state RELATED,ESTABLISHED -j ACCEPT 
 
+############################## WORKING ##############################
+
