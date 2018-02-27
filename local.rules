@@ -4,3 +4,5 @@
 # ----------------
 # This file intentionally does not come with signatures.  Put your local
 # additions here.
+
+alert icmp any any -> $HOME_NET any (msg:"ICMP test"; sid:1000001;)
