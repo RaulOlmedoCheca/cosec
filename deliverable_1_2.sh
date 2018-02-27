@@ -10,24 +10,35 @@ sudo apt-get install openssh-server openssh-client -y
 
 # Change firewall default policy to drop all incoming packets
 sudo iptables -P INPUT DROP
+sudo iptables -P OUTPUT DROP
 
 #Enable input packets in loopback interface (apache - mysql use it)
 sudo iptables -A INPUT -i lo -j ACCEPT
+sudo iptables -A OUTPUT -o lo -j ACCEPT
 
 #Accept only ssh connections from the admin's ip
 sudo iptables -A INPUT -p tcp -d $MYIP --dport ssh -s $IPFROMADMIN  -j ACCEPT 
+#sudo iptables -A OUTPUT -p tcp -d $MYIP --dport ssh -s $IPFROMADMIN  -j ACCEPT 
 
 # Accept al incoming connections to apache-tomcat
 sudo iptables -A INPUT -p tcp -d $MYIP --dport http -j ACCEPT
+#sudo iptables -A OUTPUT -p tcp -d $MYIP --dport http -j ACCEPT
  
 ############################ NOT WORKING ############################
 
 # acepta todas las conexiones entrantes que ya hayan sido establecidas o relacionadas con una peticon DNS
-sudo iptables -A INPUT -p udp -d $MYIP --sport domain -m state --state RELATED,ESTABLISHED -j ACCEPT 
-sudo iptables -A INPUT -p tcp -d $MYIP --sport domain -m state --state RELATED,ESTABLISHED -j ACCEPT 
+# sudo iptables -A INPUT -p udp -d $MYIP --sport domain -m state --state RELATED,ESTABLISHED -j ACCEPT 
+# sudo iptables -A INPUT -p tcp -d $MYIP --sport domain -m state --state RELATED,ESTABLISHED -j ACCEPT 
 
 # acepta todas las conexiones entrantes que ya hayan sido establecidas o relacionadas con una peticion saliente del puerto HTTP del origen (por ejemplo cuando se ejecuta apt-get update)
-sudo iptables -A INPUT -p tcp -d $MYIP --sport http -m state --state RELATED,ESTABLISHED -j ACCEPT 
+# sudo iptables -A INPUT -p tcp -d $MYIP --sport http -m state --state RELATED,ESTABLISHED -j ACCEPT 
 
 ############################## WORKING ##############################
+
+sudo iptables -A OUTPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+sudo iptables -A OUTPUT -p tcp --dport 80 -m state --state NEW -j ACCEPT
+sudo iptables -A OUTPUT -p tcp --dport 53 -m state --state NEW -j ACCEPT
+sudo iptables -A OUTPUT -p udp --dport 53 -m state --state NEW -j ACCEPT
+
+sudo iptables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT 
 
