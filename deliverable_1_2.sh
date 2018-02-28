@@ -1,7 +1,7 @@
 #!/bin/bash
 
-MYIP=163.117.244.97
-IPFROMADMIN=163.117.221.151
+MYIP=192.168.56.101
+IPFROMADMIN=163.168.56.1
 
 # Update headers to install openssh
 sudo apt-get update
@@ -17,28 +17,20 @@ sudo iptables -A INPUT -i lo -j ACCEPT
 sudo iptables -A OUTPUT -o lo -j ACCEPT
 
 #Accept only ssh connections from the admin's ip
-sudo iptables -A INPUT -p tcp -d $MYIP --dport ssh -s $IPFROMADMIN  -j ACCEPT 
-#sudo iptables -A OUTPUT -p tcp -d $MYIP --dport ssh -s $IPFROMADMIN  -j ACCEPT 
+sudo iptables -A INPUT -p tcp -d $MYIP --dport ssh -s $IPFROMADMIN  -m state --state NEW -j ACCEPT # lo mismo ip destino sobra
+# sudo iptables -A OUTPUT -p tcp -d $IPFROMADMIN -s $MYIP --sport ssh -m state --state RELATED,ESTABLISHED  -j ACCEPT 
 
 # Accept al incoming connections to apache-tomcat
-sudo iptables -A INPUT -p tcp -d $MYIP --dport http -j ACCEPT
+sudo iptables -A INPUT -p tcp -d $MYIP --dport http -m state --state NEW -j ACCEPT 
+
 #sudo iptables -A OUTPUT -p tcp -d $MYIP --dport http -j ACCEPT
  
-############################ NOT WORKING ############################
 
-# acepta todas las conexiones entrantes que ya hayan sido establecidas o relacionadas con una peticon DNS
-# sudo iptables -A INPUT -p udp -d $MYIP --sport domain -m state --state RELATED,ESTABLISHED -j ACCEPT 
-# sudo iptables -A INPUT -p tcp -d $MYIP --sport domain -m state --state RELATED,ESTABLISHED -j ACCEPT 
-
-# acepta todas las conexiones entrantes que ya hayan sido establecidas o relacionadas con una peticion saliente del puerto HTTP del origen (por ejemplo cuando se ejecuta apt-get update)
-# sudo iptables -A INPUT -p tcp -d $MYIP --sport http -m state --state RELATED,ESTABLISHED -j ACCEPT 
-
-############################## WORKING ##############################
-
+#TODO
 sudo iptables -A OUTPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
-sudo iptables -A OUTPUT -p tcp --dport 80 -m state --state NEW -j ACCEPT
-sudo iptables -A OUTPUT -p tcp --dport 53 -m state --state NEW -j ACCEPT
-sudo iptables -A OUTPUT -p udp --dport 53 -m state --state NEW -j ACCEPT
+sudo iptables -A OUTPUT -p tcp --dport http -m state --state NEW -j ACCEPT
+sudo iptables -A OUTPUT -p tcp --dport domain -m state --state NEW -j ACCEPT
+sudo iptables -A OUTPUT -p udp --dport domain -m state --state NEW -j ACCEPT
 
 sudo iptables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT 
 
