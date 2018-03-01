@@ -39,4 +39,4 @@ sudo iptables -A OUTPUT -p udp --dport domain -m state --state NEW -j ACCEPT
 sudo iptables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT 
 
 # Start snort alert system
-sudo snort -c /etc/snort/snort.conf -l /var/log/snort -A console -D
+sudo snort -c /etc/snort/snort.conf -l /var/log/snort -A console
