@@ -6,7 +6,10 @@ IPFROMADMIN=192.168.56.1
 # Update headers to install openssh
 sudo apt-get update
 # Install openssh in order to allow ssh connections into the server
-sudo apt-get install openssh-server openssh-client -y 
+sudo apt-get install openssh-server openssh-client -y
+
+# Activate automatic security updates
+sudo apt-get install unattended-upgrades
 
 # Change firewall default policy to drop all incoming packets
 sudo iptables -P INPUT DROP
