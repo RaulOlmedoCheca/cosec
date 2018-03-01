@@ -20,7 +20,7 @@ sudo iptables -A INPUT -i lo -j ACCEPT
 sudo iptables -A OUTPUT -o lo -j ACCEPT
 
 # Accept only ssh connections from the admin's ip
-sudo iptables -A INPUT -p tcp -d $MYIP --dport ssh -s $IPFROMADMIN  -m state --state NEW -j ACCEPT # lo mismo ip destino sobra
+sudo iptables -A INPUT -p tcp -d $MYIP --dport ssh -s $IPFROMADMIN  -m state --state NEW -j ACCEPT
 # sudo iptables -A OUTPUT -p tcp -d $IPFROMADMIN -s $MYIP --sport ssh -m state --state RELATED,ESTABLISHED  -j ACCEPT 
 
 # Accept al incoming connections to apache-tomcat
