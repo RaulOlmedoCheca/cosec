@@ -8,45 +8,50 @@
 <%@ page import = "java.sql.PreparedStatement" %>
 <%@ page import = "java.sql.ResultSet" %>
 <%@ page import = "java.sql.SQLException" %>
+<%@ page import = "org.mindrot.jbcrypt.*" %>
 <%
 try {
-  // Step 1.- Load the JDBC driver
+  //Step 1.- Load Driver
   Class.forName("org.gjt.mm.mysql.Driver");
   String urlDB = "jdbc:mysql://localhost:3306/fakebook";
-  // Step 2.- Create a Connection object
+  // Step 2.- Crete connection
   Connection con = DriverManager.getConnection(
     urlDB,"root", "root");
 
-  // Step 3.- Insert Comment into DDBB
-  String insert = "INSERT INTO WallMessages (src_user, dst_user, content) VALUES (?, ?, ?)";
-  PreparedStatement ps = con.prepareStatement(insert);
-
-  ps.setLong(1, Long.parseLong((String)session.getAttribute("id")));
-  ps.setLong(2, Long.parseLong(request.getParameter("dst_user")));
-  ps.setString(3, request.getParameter("content"));
-  ps.executeUpdate();
-
-
-  ps.close();
+  // Step 3.- Create select
+  PreparedStatement s = con.prepareStatement("SELECT id, name, password FROM users WHERE email=?");
+  s.setString(1,request.getParameter("email"));
+  //s.setString(2, BCrypt.hashpw(request.getParameter("password"), BCrypt.gensalt()));
+    
+   ResultSet result = s.executeQuery();
+  //Step 4.- look into the query
+   if(result.next() && BCrypt.checkpw(request.getParameter("password"), result.getString("password"))){
+        session.setAttribute("id", result.getString("id"));
+        session.setAttribute("name", result.getString("name"));
+        %>
+        <jsp:forward page="wall.jsp"/>
+<%
+   }else{
+   %>
+   <jsp:forward page="index.jsp?message=Invalid user or password"/>
+<%
+   }
+  s.close();
   con.close();
 }
 catch (ClassNotFoundException e1) {
   // JDBC driver class not found, print error message to the console
-  out.println(e1.toString());
+  out.println("ERROR 1a: "+e1.toString());
   //end catch
 }
 catch (SQLException e2) {
   // Exception when executing java.sql related commands, print error message to the console
-  out.println(e2.toString());
+  out.println("ERROR 2a: "+e2.toString());
   //end catch
 }
 catch (Exception e3) {
   // other unexpected exception, print error message to the console
-  out.println(e3.toString());
+  out.println("ERROR 3a: "+e3.toString());
   //end catch
 }
-        %>
-<% String valueAux = request.getParameter("dst_user"); %>
-<jsp:forward page="wall.jsp">
-            <jsp:param name="idWall" value="<%= valueAux %>"/>
-</jsp:forward>
+%>

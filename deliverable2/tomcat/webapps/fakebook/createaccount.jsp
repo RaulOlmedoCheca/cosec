@@ -8,6 +8,7 @@
 <%@ page import = "java.sql.PreparedStatement" %>
 <%@ page import = "java.sql.ResultSet" %>
 <%@ page import = "java.sql.SQLException" %>
+<%@ page import = "org.mindrot.jbcrypt.*" %>
 <%
 try {
   // Step 1.- Load the JDBC driver
@@ -28,7 +29,8 @@ try {
   ps.setString(2, request.getParameter("name"));
   ps.setString(3, request.getParameter("surname"));
   ps.setString(4, request.getParameter("email"));
-  ps.setString(5, request.getParameter("password"));
+  String hashed = BCrypt.hashpw(request.getParameter("password"), BCrypt.gensalt());
+  ps.setString(5, hashed);
   ps.executeUpdate();
 
   ps.close();
