@@ -9,6 +9,8 @@
 <%@ page import = "java.sql.SQLException" %>
 <%@ page import = "java.util.Hashtable" %>
 
+<%@ taglib prefix = "c" uri = "http://java.sun.com/jsp/jstl/core" %>
+
 <%!
     String idWall, nameWall;
     java.util.Vector<java.util.Hashtable> comments;
@@ -132,7 +134,7 @@ catch (Exception e3) {
     </ul>
     <ul id="fb_menubar_aux" class="fb_menu_list">
       <li class="fb_menu" id="fb_menu_logout"><a href="closesession.jsp" class="fb_menu_link">Close Session</a></li>
-      <li class="fb_menu" id="fb_menu_link"><a href="wall.jsp" class="fb_menu_link" accesskey="1">I am <%= (String)session.getAttribute("name") %>: Go to my wall</a></li>
+      <li class="fb_menu" id="fb_menu_link"><a href="wall.jsp" class="fb_menu_link" accesskey="1">I am <c:out value='<%= (String)session.getAttribute("name") %>'/>: Go to my wall</a></li>
     </ul>
   </div>
 </div>
@@ -156,9 +158,11 @@ catch (Exception e3) {
             <% for(int i=0;i<comments.size();i++){ %>
                     <tr>
                         
-                        <td><h3 class="GenericStory_Message GenericStory_Report"><a href="wall.jsp?idWall=
-<%= comments.get(i).get("src_user")%>"><%= users.get(comments.get(i).get("src_user")) %></a>:
-                        <%= comments.get(i).get("content") %></h3><hr/></td>
+                        <td><h3 class="GenericStory_Message GenericStory_Report">
+				<a href="wall.jsp?idWall=<%= comments.get(i).get("src_user")%>">
+				<c:out value='<%= users.get(comments.get(i).get("src_user")) %>'/></a>:
+				<c:out value='<%= comments.get(i).get("content")%>'/>
+				</h3><hr/></td>
                     
                     
                     </tr>
